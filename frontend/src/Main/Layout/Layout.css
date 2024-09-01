@@ -1,0 +1,208 @@
+a {
+  color: #47b2e4;
+  text-decoration: none;
+}
+a:hover {
+  color: #73c5eb;
+  text-decoration: none;
+}
+
+h1 {
+  letter-spacing: 4px;
+  font-weight: 900;
+}
+
+h1,
+h2 {
+  font-family: "Jost", sans-serif;
+}
+
+body {
+  background-color: #f1f2f4;
+}
+
+.disclaimer {
+  background-color: white;
+}
+
+/* Navbar, Navbar Brand, Navbar Heading, Navbar SCroll */
+
+.navbar-brand {
+  font-family: "Jost", sans-serif;
+  letter-spacing: 4px;
+  font-weight: 900; 
+  font-size: 30px;
+  color: #fff;
+  pointer-events: none;
+}
+
+.navbar a:hover {
+  color: #47b2e4;
+}
+
+.navbar .navbar-button,
+.navbar .navbar-button:focus {
+  font-family: "Jost", sans-serif;
+  padding: 8px 20px;
+  margin-left: 30px;
+  border-radius: 50px;
+  color: #fff;
+  font-size: 14px;
+  border: 2px solid #47b2e4;
+  font-weight: 600;
+}
+
+.navbar .navbar-button:hover,
+.navbar .navbar-button:focus:hover {
+  color: #fff;
+  background: #31a9e1;
+}
+
+.navbar-scroll {
+  background-color: #0f1a2d;
+  transition: background-color 2s;
+}
+
+.navbar-unscroll {
+  transition: background-color 1.25s;
+}
+
+/* Banner */
+
+.banner {
+  background-color: #2f4c7e;
+  width: 100%;
+  padding: 40px 0;
+  overflow: hidden;
+  -webkit-animation-name: bedrock-banner-background;
+  -webkit-animation-duration: 40s;
+  animation-name: bedrock-banner-background;
+  animation-duration: 40s;
+  animation-iteration-count: infinite;
+}
+
+.banner .container {
+  padding-top: 72px;
+}
+
+.banner h1 {
+  /* margin: 0 0 10px 0; */
+  font-size: 48px;
+  color: #fff;
+}
+
+.banner h2 {
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+.banner .banner-button {
+  font-family: "Jost", sans-serif;
+  letter-spacing: 3px;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 1px;
+  padding: 10px 28px 11px 28px;
+  border-radius: 50px;
+  transition: 0.5s;
+  color: #fff;
+  background: #47b2e4;
+  border: 2px solid #2f4c7e;
+}
+
+.banner .banner-button:hover {
+  background: #209dd8;
+}
+
+.hide-banner{
+  display: none;
+}
+
+.hide-banner-background {
+  display: none;
+}
+
+.show-banner-background {
+  height: 9vh;
+  background-color: #0f1a2d;
+  /* transition: background-color 2s; */
+}
+
+/* Animated bedrock image */
+
+.animate-bedrock-logo {
+  -webkit-animation: action 1.5s infinite  alternate;
+  animation: action 1.5s infinite  alternate;
+}
+
+@-webkit-keyframes action {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-20px); }
+}
+
+@keyframes action {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-20px); }
+}
+
+/*! CSS Used keyframes */
+
+@keyframes bedrock-banner-background {
+  0% {
+      background-color: #2f4c7e;
+  }
+  10% {
+      background-color: #203354;
+  }
+  20% {
+      background-color: #0f1a2d;
+  }
+  30% {
+      background-color: #425a85;
+  }
+  40% {
+      background-color: #202e47;
+  }
+  50% {
+      background-color: #202e47;
+  }
+  60% {
+      background-color: #425a85;
+  }
+  70% {
+      background-color: #0f1a2d;
+  }
+  80% {
+      background-color: #203354;
+  }
+  90% {
+      background-color: #2f4c7e;
+  }
+  100% {
+      background-color: #2f4c7e;
+  }
+}
+
+.bedrock-footer {
+  background-color: #2f4c7e;
+}
+
+.copyright {
+  float:left;
+  font-size:13px;
+  align-content: center;
+  text-align: center;
+}
+
+.credits { 
+  float:right;
+  font-size:13px;
+  align-content: center;
+  text-align: center;
+}
+
+.disclaimer {
+  align-content: center;
+  height: 100px;
+}

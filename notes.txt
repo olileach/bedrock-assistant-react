@@ -1,0 +1,7 @@
+
+
+# docker run -it -p 0.0.0.0:3000:3000 -p localhost:9000:9000 bedrock-assistant
+# docker run -it -d --network host bedrock-assistant
+# lsof -nP -iTCP -sTCP:LISTEN
+# aws s3 cp s3://account-bucket-eu-west-2/bedrock-assistant . --recursive
+# https://kb.teramind.co/en/articles/8791235-how-to-generate-your-own-self-signed-ssl-certificates-for-use-with-an-on-premise-deployments
