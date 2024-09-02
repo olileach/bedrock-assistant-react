@@ -5,8 +5,9 @@ import { FormControl } from '@mui/material';
 import { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setRecordingModel } from '../../Redux/RecorderModelForm';
+import * as consts from '../../Constants/index';
 
-export default function ModelDropdown() {
+export default function ModelDropdown({width=600, textFieldText}) {
 
   const dispatch = useDispatch();
 
@@ -41,17 +42,17 @@ export default function ModelDropdown() {
   return (
     <>
 
-      <FormControl >
+      <FormControl>
         <Autocomplete
           disablePortal
           id="model-config"
           focus={true}
           onChange={(e, value) => recordNameForm(e, value)}
           options={modelList.map((option) => option.model)}
-          sx={{ width: 600, background: "white", zIndex: 2 }}
+          sx={{ width: width !== 600 ? width: 600,  background: "white", zIndex: 2 }}
           renderInput={(params) => (
             <TextField {...params}
-              placeholder='Choose a model or use the default configured'
+              placeholder= {textFieldText ? textFieldText : consts.CONFIGURE_DEFAULT_MODEL}
               size="small"
             >
             </TextField>

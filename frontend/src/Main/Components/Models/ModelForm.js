@@ -41,7 +41,7 @@ if (!modelName) {
   localStorage.setItem("modelTextUsed", modelName);
 }
 
-export default function RecordForm() {
+export default function ModelForm() {
 
   const recorderModelForm = useSelector((state) => state.recorderModelForm.value);
   let [modelUsed, setModelUsed] = useState();
@@ -75,7 +75,7 @@ export default function RecordForm() {
         </Grid>
         <Grid container justifyContent="center" style={{ paddingTop: 20, paddingBottom: 40 }} item>
           <Typography className={classes.modelText}> Model </Typography>
-          <ModelDropdown>
+          <ModelDropdown width={600}>
           </ModelDropdown>
         </Grid>
         <Grid container justifyContent="center" item style={{ paddingTop: 10 }}>
