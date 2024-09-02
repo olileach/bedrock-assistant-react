@@ -5,9 +5,10 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { useSelector, useDispatch } from 'react-redux';
 import Separator from '../Utils/Separator';
 import { InputAdornment } from '@mui/material';
-import { bedrockText, getIndexedDbValueFromId} from '../../Utils/RecorderUtils';
+import { bedrockText, getIndexedDbValueFromId } from '../../Utils/RecorderUtils';
 import { setQuestionBox } from '../../Redux/RecorderQuestionBox';
 import { setRecordingResultsValue } from '../../Redux/RecorderResultsBoxValue';
+import ModelDropdown from '../Models/ModelDropdown';
 
 
 const RecorderSummaryBox = () => {
@@ -15,15 +16,15 @@ const RecorderSummaryBox = () => {
     const dispatch = useDispatch()
 
     let [resultBoxValue, setResultBoxValue] = useState()
-
     let resultsText = useSelector((state) => state.recorderResultsValue.results);
     let showResultsBox = useSelector((state) => state.resultsBox.value);
     const showQuestionBox = useSelector((state) => state.questionBox.value);
     const dataGridCheckboxRowId = useSelector((state) => state.datagridRowId.value);
+    const recorderModelForm = useSelector((state) => state.recorderModelForm.value);
 
     useEffect(() => {
-        setResultBoxValue(resultsText) 
-      }, [resultsText])
+        setResultBoxValue(resultsText)
+    }, [resultsText])
 
     let resultBoxRef = useRef(null);
 
@@ -36,21 +37,29 @@ const RecorderSummaryBox = () => {
 
     const runBedrockQuestion = async (e) => {
 
+
+        let modelUsed;
         dispatch(setQuestionBox(false))
+
+        let items = await getIndexedDbValueFromId(dataGridCheckboxRowId);
+
+        if (recorderModelForm === undefined) {
+            modelUsed = items.model;
+          } else { modelUsed = recorderModelForm }
+        
         const now = new Date();
         const date = now.toLocaleString();
 
-        let items = await getIndexedDbValueFromId(dataGridCheckboxRowId);
         let text = "".concat(items.transcribeText, "\n\n", e.target.value)
-        let updatedText = ''.concat(resultsText, 
-                                "\n\n\nFollow up question on: ", 
-                                date,
-                                "\n\n",
-                                "Question asked: " + e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1),
-                                "\n_______________________________________________________________\n")
+        let updatedText = ''.concat(resultsText,
+            "\n\n\nFollow up question on: ",
+            date,
+            "\n\n",
+            "Question asked: " + e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1),
+            "\n_______________________________________________________________\n")
         const tempResultBoxValue = resultsText + "\n\n\nPlease wait while your follow up question is answered...."
         dispatch(setRecordingResultsValue(tempResultBoxValue))
-        let bedrockResponse = await bedrockText(dataGridCheckboxRowId, text, items.model, updatedText)
+        let bedrockResponse = await bedrockText(dataGridCheckboxRowId, text, modelUsed, updatedText)
         dispatch(setRecordingResultsValue(bedrockResponse))
         dispatch(setQuestionBox(true))
 
@@ -93,20 +102,19 @@ const RecorderSummaryBox = () => {
 
                         </Grid>
                         <Grid item xs={6} sm={3}
-                        
-                        container
-                        direction="column"
-                        alignItems="flex-end"
-                        justify="flex-start"
+
+                            container
+                            direction="column"
+                            alignItems="flex-end"
+                            justify="flex-start"
                         >
                             {/* <Fab variant="outlined"> */}
                             <Tooltip title="Copy text" placement="right">
-                            <IconButton 
-                                onClick={copyText}
-
-                            >
-                                <ContentCopyIcon color="primary" />
-                            </IconButton>
+                                <IconButton
+                                    onClick={copyText}
+                                >
+                                    <ContentCopyIcon color="primary" />
+                                </IconButton>
                             </Tooltip>
                             {/* </Fab> */}
                         </Grid>
@@ -129,33 +137,40 @@ const RecorderSummaryBox = () => {
                         </Grid>
                         <Grid item xs={2} sm={2}>
                         </Grid>
-                        <Grid item xs={10} sm={10}>
-                            {showQuestionBox && 
+                        {showQuestionBox &&
+                            <Grid item xs={10} sm={10}>
                                 <TextField size="small"
-                                sx={{ width: '80%' }}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter')
-                                        runBedrockQuestion(e)
-                                 }}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="top">
-                                            Ask a followup question:
-                                        </InputAdornment>
-                                    ),
-                                }}
-                            ></TextField>
-}
-                        </Grid>
-                        <Grid item xs={2} sm={3}>
-                        </Grid>
-                        <Grid item xs={10} sm={7}>
-                        {/* <ModelConfig style={{}}></ModelConfig> */}
+                                    sx={{ width: '80%' }}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter')
+                                            runBedrockQuestion(e)
+                                    }}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="top">
+                                                Ask a followup question:
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                ></TextField>
+                            </Grid>
+                        }
+                        {/* {showQuestionBox &&
+                            <Grid
+                                item
+                                container
+                                direction="column"
+                                alignItems="center"
+                                justify="center"
+                            >
+                                <ModelDropdown></ModelDropdown>
+                            </Grid>
+                        } */}
+                        <Grid>
+                            <div style={{ padding: 20 }} />
                         </Grid>
 
-                        <Grid item xs={10} sm={10}>
-                            
-                        </Grid>
+
                     </Grid>
                 </Box>
 

@@ -4,7 +4,6 @@ import { Grid, Box } from "@material-ui/core/";
 import Typography from "@material-ui/core/Typography";
 import TextField from '@mui/material/TextField';
 import Separator from "../Utils/Separator";
-import CircularProgress from '@mui/material/CircularProgress';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
@@ -55,8 +54,11 @@ export default function RecordForm() {
 
   const submit = async (event) => {
 
+    if (bedrockRunning === true) {
+      return
+    }
+    bedrockRunning = true
     event.preventDefault();
-
     showImageResults(false);
     setShowResults(false);
     setShowProgress(true);
@@ -78,6 +80,7 @@ export default function RecordForm() {
     setShowProgress(false);
     setShowResults(true);
     setBedrockResponse(responseText + "\n");
+    bedrockRunning = false
   };
 
   const fileDataURL = file => new Promise((resolve, reject) => {
@@ -162,8 +165,8 @@ export default function RecordForm() {
 
           <Grid container justifyContent="center" item style={{ paddingTop: 20, paddingBottom: 10 }}>
             <Grid>
-              <Typography className={classes.headerTitle} >Bedrock Review</Typography>
-              <Separator width={500}></Separator>
+              <Typography className={classes.headerTitle} >Bedrock Architecture Review</Typography>
+              <Separator width={600}></Separator>
               <TextField
                 style={{ paddingTop: 20, paddingBottom: 10 }}
                 sx={{

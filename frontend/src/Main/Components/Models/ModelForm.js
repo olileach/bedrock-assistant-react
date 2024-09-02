@@ -1,64 +1,95 @@
-import * as React from 'react';
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import { FormControl } from '@mui/material';
 import { useEffect, useState, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { setRecordingModel } from '../../Redux/RecorderModelForm';
+import { makeStyles } from "@material-ui/core/styles";
+import { Grid } from "@material-ui/core/";
+import Typography from "@material-ui/core/Typography";
+import ModelDropdown from './ModelDropdown';
+import { useSelector } from 'react-redux';
+import SendIcon from '@mui/icons-material/Send';
+import Button from '@mui/material/Button';
 
-export default function ModelConfig() {
+const modelConfigStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+    border: 2,
+    borderColor: '#42a5f5',
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderRadius: '5px',
+    background: 'white'
 
-  const dispatch = useDispatch();
+  },
+  headerTitle: {
+    paddingTop: theme.spacing(2),
+    fontSize: "32px",
+    fontFamily: "Jost",
+  },
+  headerText: {
+    fontSize: "16px",
+    fontFamily: "Jost",
+    paddingBottom: theme.spacing(2),
+  },
+  modelText: {
+    height: 2,
+    paddingTop: theme.spacing(1),
+    padding: theme.spacing(2),
+  },
+}));
 
-  const [modelList, getModelList] = useState([]);
-  const [modelUsed, getModelUsed] = useState();
+var modelName = localStorage.getItem("modelTextUsed");
+if (!modelName) {
+  modelName = "anthropic.claude-v2";
+  localStorage.setItem("modelTextUsed", modelName);
+}
+
+export default function RecordForm() {
+
+  const recorderModelForm = useSelector((state) => state.recorderModelForm.value);
+  let [modelUsed, setModelUsed] = useState();
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_BASE_URL}`+"/api/models")
-      .then(response => {
-        return response.json();
-      }).then(response => {
-        getModelList(response)
-      }).catch(e => {
-        console.error(e.message)
-      });
-  }, [])
-
-  useEffect(() => {
-    getModelUsed(localStorage.getItem("modelTextUsed"));
+    setModelUsed(localStorage.getItem("modelTextUsed"));
   }, [modelUsed])
 
-  const recordNameForm = (e, value) => {
-    let model;
-    if (value){
-      model = value;
-    } else {
-      model = localStorage.getItem("modelTextUsed")
+  const classes = modelConfigStyles();
+
+  const setModel = async (e) => {
+
+    if (recorderModelForm === undefined) {
+      console.log("select a model")
+      return;
     }
-    dispatch(setRecordingModel(model))
+
+    localStorage.setItem("modelTextUsed", recorderModelForm);
+    setModelUsed(recorderModelForm);
   }
 
   return (
     <>
+      <div style={{ padding: 20 }} className={classes.root}>
 
-      <FormControl>
-        <Autocomplete
-          disablePortal
-          id="model-config"
-          focus={true}
-          onChange={(e, value) => recordNameForm(e, value)}
-          options={modelList.map((option) => option.model)}
-          sx={{ width: 600, background: "white", zIndex: 2 }}
-          renderInput={(params) => (
-            <TextField {...params}
-              placeholder='Choose a model or use the default configured'
-              size="small"
-              sx={{ width: 600, background: "white", zIndex: 2000 }}
-            >
-            </TextField>
-          )}
-        />
-      </FormControl>
+        <Grid container justifyContent="center" item>
+          <Typography className={classes.headerTitle} >Configure Default Model</Typography>
+        </Grid>
+        <Grid container justifyContent="center" item>
+          <Typography className={classes.headerText} >Default model configured: {modelUsed}</Typography>
+        </Grid>
+        <Grid container justifyContent="center" style={{ paddingTop: 20, paddingBottom: 40 }} item>
+          <Typography className={classes.modelText}> Model </Typography>
+          <ModelDropdown>
+          </ModelDropdown>
+        </Grid>
+        <Grid container justifyContent="center" item style={{ paddingTop: 10 }}>
+          <Button
+            component="label"
+            variant="outlined"
+            onClick={setModel}
+            endIcon={<SendIcon />}
+          >
+            Set Model
+          </Button>
+        </Grid>
+        <div style={{ paddingBottom: 30 }}></div>
+      </div>
     </>
-  );
+  )
 }

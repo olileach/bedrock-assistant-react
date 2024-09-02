@@ -8,7 +8,7 @@ import TextField from '@mui/material/TextField';
 import RecordTimerInput from "./RecorderTimer";
 import { useDispatch, useSelector } from 'react-redux';
 import { setRecordingName } from '../../Redux/RecorderNameForm';
-import ModelConfig from '../Models/ModelForm';
+import ModelDropdown from '../Models/ModelDropdown';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -185,7 +185,7 @@ export default function RecordForm() {
                 alignItems="center"
                 
               >
-                <ModelConfig style={{}}></ModelConfig>
+                <ModelDropdown style={{}}></ModelDropdown>
               </Grid>
               {toggleTimer &&
                 <Grid

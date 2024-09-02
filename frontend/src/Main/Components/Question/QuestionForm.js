@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Box } from "@material-ui/core/";
 import Typography from "@material-ui/core/Typography";
 import TextField from '@mui/material/TextField';
-import ModelConfig from '../Models/ModelForm';
+import ModelDropdown from '../Models/ModelDropdown';
 import Separator from "../Utils/Separator";
 import { useSelector } from 'react-redux';
 import LinearProgress from '@mui/joy/LinearProgress';
@@ -138,8 +138,8 @@ export default function RecordForm() {
         </Grid>
         <Grid container justifyContent="center" style={{ paddingTop: 20, paddingBottom: 40 }} item>
           <Typography className={classes.modelText}> Model </Typography>
-          <ModelConfig>
-          </ModelConfig>
+          <ModelDropdown>
+          </ModelDropdown>
         </Grid>
 
 
@@ -148,7 +148,7 @@ export default function RecordForm() {
             <Grid container justifyContent="center" item style={{ paddingTop: 10, paddingBottom: 0 }}>
             <Typography
               className={classes.modelText}>
-              Please wait while Bedrock answers your question
+              Please wait while Bedrock answers your question.
             </Typography>
           </Grid>
           <Grid container justifyContent="center" item style={{ paddingTop: 10, paddingBottom: 0 }}>
@@ -164,15 +164,8 @@ export default function RecordForm() {
           </Grid>
           </>
         }
-
-
-
       </div>
       <div style={{ paddingBottom: 30 }} />
-
-      {/* progress sections */}
-
-
 
       {showResults &&
         <>

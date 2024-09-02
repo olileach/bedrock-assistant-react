@@ -1,71 +1,53 @@
-import * as React from 'react';
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import { Button, Stack, FormControl, Typography } from '@mui/material';
-import { useEffect, useState, useRef } from 'react';
-import SendIcon from '@mui/icons-material/Send';
+import React from "react";
+import Box from '@mui/material/Box';
+import { Grid } from '@mui/material';
+import { makeStyles } from '@material-ui/core/styles';
+import ModelConfig from "../Components/Models/ModelForm";
 
-export default function ModelConfig() {
+export default function Models() {
 
-  let modelInputRef = useRef(null);
-  const [modelList, getModelList] = useState([]);
-  const [modelUsed, getModelUsed] = useState();
+  const questionStyles = makeStyles((theme) => ({
+    root: {
+      flexGrow: 1,
+      fontFamily: 'Jost',
+      backgroundColor: 'grey',
+      overflow: "visible",
+      paddingTop: 40
+    },
+    paper: {
+      padding: theme.spacing(),
+      margin: "auto",
+      maxWidth: 1200,
+      paddingBottom: 50
 
-  useEffect(() => {
-    fetch(`${process.env.REACT_APP_BASE_URL}`+"/api/models", {mode: 'cors'})
-      .then(response => {
-        return response.json();
-      }).then(response => {
-        getModelList(response)
-      }).catch(e => {
-        console.errpr(e.message + " " + e)
-      });
-  }, [])
+    },
+    gridRows: {
+      borderBottom: "0px solid white",
+      paddingBottom: "20px",
+      paddingTop: 10
+      
+    },
+  }));
 
-  useEffect(() => {
-    getModelUsed(localStorage.getItem("modelTextUsed"));
-  }, [modelUsed])
 
-  function setModel(){
-    var modelName = modelInputRef.current.value
-    if (modelName.length > 1){
-      localStorage.setItem("modelTextUsed", modelName);
-      getModelUsed(modelName);
-    }
-  }
+  const classes = questionStyles();
 
   return (
     <>
-      <Stack spacing={2} alignItems="center">
-        <Typography> 
-          You are currently using the {modelUsed} model
-        </Typography>
-      </Stack >
-      <Stack spacing={2} sx={{ m: 4 }} alignItems="center">
-        <FormControl>
-          <Autocomplete
-            disablePortal
-            id="model-config"
-            options={modelList.map((option) => option.model)}
-            sx={{ width: 700, background: "white" }}
-            renderInput={(params) => (
-              <TextField {...params} label="Chose a model"
-              inputRef={modelInputRef}
-              >
-              </TextField>
-            )}
-          />
-        </FormControl>
-      </Stack>
-      <Stack spacing={2} sx={{ m: 4 }} alignItems="center">
-        <Button
-          style={{ backgroundColor: "#425a85" }}
-          variant="contained"
-          onClick={setModel}
-          endIcon={<SendIcon />}>
-          Set Model
-        </Button>
-      </Stack>
+
+      <Box className={classes.paper}  >
+        <Grid container >
+          <Grid container direction="row" item xs={12} style={{ paddingTop: 20 }}>
+            <Grid
+              item
+              xs
+              justify="center"
+            >
+              < ModelConfig></ModelConfig>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Box>
     </>
   );
 }
