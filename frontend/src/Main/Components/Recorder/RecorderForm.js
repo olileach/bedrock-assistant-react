@@ -9,6 +9,7 @@ import RecordTimerInput from "./RecorderTimer";
 import { useDispatch, useSelector } from 'react-redux';
 import { setRecordingName } from '../../Redux/RecorderNameForm';
 import ModelDropdown from '../Models/ModelDropdown';
+import * as consts from '../../Constants/index';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -174,6 +175,16 @@ export default function RecordForm() {
                   id="outlined-basic"
                   variant="outlined"
                   onChange={recordNameForm}
+                  inputProps = {
+                    {
+                      sx: {
+                        '&::placeholder': {
+                          color: '#adafb3',
+                          opacity: 1, // otherwise firefox shows a lighter color
+                        },
+                      },
+                    }
+                  }
                 />
               </Grid>
               <Grid
@@ -208,7 +219,7 @@ export default function RecordForm() {
                 justifyContent="flex-start"
                 alignItems="center"
               >
-                <Typography> {toggleAutoTranscribe === true ? "On - Transcribe after the recording is saved" : "Off - Transcribe later using the transcribe button in the table below"}</Typography>
+                <Typography> {toggleAutoTranscribe === true ? consts.TRANSCRIBE_ON : consts.TRANSCRIBE_OFF}</Typography>
               </Grid>
               <Grid
                 item

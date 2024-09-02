@@ -9,6 +9,8 @@ import { bedrockText, getIndexedDbValueFromId } from '../../Utils/RecorderUtils'
 import { setQuestionBox } from '../../Redux/RecorderQuestionBox';
 import { setRecordingResultsValue } from '../../Redux/RecorderResultsBoxValue';
 import ModelDropdown from '../Models/ModelDropdown';
+import { updateItem } from '../../Utils/RecorderUtils';
+import * as consts from '../../Constants';
 
 
 const RecorderSummaryBox = () => {
@@ -45,7 +47,9 @@ const RecorderSummaryBox = () => {
 
         if (recorderModelForm === undefined) {
             modelUsed = items.model;
-          } else { modelUsed = recorderModelForm }
+          } else { 
+            modelUsed = recorderModelForm
+        }
         
         const now = new Date();
         const date = now.toLocaleString();
@@ -57,9 +61,10 @@ const RecorderSummaryBox = () => {
             "\n\n",
             "Question asked: " + e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1),
             "\n_______________________________________________________________\n")
-        const tempResultBoxValue = resultsText + "\n\n\nPlease wait while your follow up question is answered...."
+        const tempResultBoxValue = resultsText + consts.BEDROCK_FOLLOW_UP_WAIT
         dispatch(setRecordingResultsValue(tempResultBoxValue))
         let bedrockResponse = await bedrockText(dataGridCheckboxRowId, text, modelUsed, updatedText)
+        await updateItem(dataGridCheckboxRowId, {'model' : modelUsed})
         dispatch(setRecordingResultsValue(bedrockResponse))
         dispatch(setQuestionBox(true))
 
@@ -133,29 +138,40 @@ const RecorderSummaryBox = () => {
                                 multiline
                                 value={resultsText}
                                 inputRef={resultBoxRef}
+                                
                             ></TextField>
                         </Grid>
                         <Grid item xs={2} sm={2}>
                         </Grid>
                         {showQuestionBox &&
-                            <Grid item xs={10} sm={10}>
+                            <Grid 
+                                item
+                                container
+                                direction="column"
+                                alignItems="center"
+                                justify="center"
+                            >
                                 <TextField size="small"
-                                    sx={{ width: '80%' }}
+                                    sx={{ width: 800 }}
                                     onKeyDown={(e) => {
                                         if (e.key === 'Enter')
                                             runBedrockQuestion(e)
                                     }}
                                     InputProps={{
                                         startAdornment: (
-                                            <InputAdornment position="top">
-                                                Ask a followup question:
+                                            <InputAdornment 
+                                                position="top"                                                
+                                                >
+                                                <Typography style={{color:"#a3a2a2"}}>
+                                                    Ask a followup question:
+                                                </Typography>
                                             </InputAdornment>
                                         ),
                                     }}
                                 ></TextField>
                             </Grid>
                         }
-                        {/* {showQuestionBox &&
+                        {showQuestionBox &&
                             <Grid
                                 item
                                 container
@@ -163,9 +179,9 @@ const RecorderSummaryBox = () => {
                                 alignItems="center"
                                 justify="center"
                             >
-                                <ModelDropdown></ModelDropdown>
+                                <ModelDropdown  width={800} textFieldText={consts.CONFIGURE_SUMMARY_MODEL}></ModelDropdown>
                             </Grid>
-                        } */}
+                        }
                         <Grid>
                             <div style={{ padding: 20 }} />
                         </Grid>
