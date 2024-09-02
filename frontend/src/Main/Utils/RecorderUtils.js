@@ -1,4 +1,5 @@
 import Dexie from 'dexie';
+import * as consts from '../Constants/index'
 
 const db = new Dexie('BedrockRecorder');
 
@@ -29,7 +30,7 @@ async function indexDbController(blob = false, transcribe, recorderNameForm = fa
                 model,
                 transcribe = "inprogress",
                 recorderTimerForm,
-                outputText = "Transcription in progress. Please wait.");
+                outputText = consts.TRANSCRIPTION_IN_PROGRESS);
             transcribeResults = await transcribeText(id, blob);
             bedrockResults = bedrockText(id, transcribeResults, model)
         }
@@ -70,11 +71,14 @@ async function getIndexedDbValueFromId(id) {
 
 }
 
-async function updatedItem(id, props) {
+async function updateItem(id, props) {
 
+    console.log(props)
     await db.recording.update(
-        id, { ...props }
-    )
+        id, props
+    ).then(function (done) {
+        console.log(done)
+    });
 }
 
 async function bedrockText(id, text, model, followup = false) {
@@ -150,14 +154,13 @@ async function updateBedrockText(id, bedrockText) {
     await db.recording.update(
         id, { transcribe: true, outputText: bedrockText }
     ).then(function (update) {
-        console.error(update)
     });
 }
 
 async function runTranscribeItem(id, model) {
 
     const item = await db.recording.get(id);
-    await db.recording.update(id, { transcribe: "inprogress", outputText: "Transcription in progress. Please wait..." });
+    await db.recording.update(id, { transcribe: "inprogress", outputText: consts.TRANSCRIPTION_IN_PROGRESS });
     const transcribeRequest = await transcribeText(id, item.recording);
     const bedrockResults = await bedrockText(id, transcribeRequest, model);
     await db.recording.update(id, { transcribe: true });
@@ -196,7 +199,7 @@ export {
     getIndexedDbValueFromId,
     queryRecordingData,
     runTranscribeItem,
-    updatedItem,
+    updateItem,
     updateRecordNameCell,
     updateTranscribeText,
 };
