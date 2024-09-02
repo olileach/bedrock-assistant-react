@@ -1,11 +1,9 @@
 
 import { AudioRecorder } from 'react-audio-voice-recorder';
 import indexDbController from '../../Utils/RecorderUtils';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 const RecordContol = () => {
-
-  const dispatch = useDispatch();
 
   const transcribe = useSelector((state) => state.autoTranscribeToggle.value);
   const recorderNameForm = useSelector((state) => state.recorderNameForm.value);

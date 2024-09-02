@@ -22,6 +22,7 @@ import { setResultsBox } from '../../Redux/RecordingResultsBox';
 import { setQuestionBox } from '../../Redux/RecorderQuestionBox';
 import { datagridRowId } from "../../Redux/DataGridRowId";
 import RecordingDataGridNoRowsOverlay from "./RecorderDataGridOverlay";
+import * as consts from '../../Constants';
 
 // I think we should be useing live query instead of useState
 import { useLiveQuery } from "dexie-react-hooks";
@@ -68,7 +69,7 @@ const RecordDataGrid = () => {
         }
         const id = parseInt(e['id']);
         
-        dispatch(setRecordingResultsValue("Transcription in progress. Please wait."))
+        dispatch(setRecordingResultsValue(consts.TRANSCRIPTION_IN_PROGRESS))
         const itemStatus = await db.recording.get(id);
         const bedrockResults = await runTranscribeItem(id, itemStatus.model);
         dispatch(setRecordingResultsValue(bedrockResults));
@@ -244,13 +245,12 @@ const RecordDataGrid = () => {
             case false:
                 dispatch(setQuestionBox(false))
                 dispatch(setResultsBox(true));
-                let outputText = "Recording not transcribed. " +
-                    "Use the icon in the table to transcribe your recording."
+                let outputText = consts.RECORDING_NOT_TRANSCRIBED
                 dispatch(setRecordingResultsValue(outputText))
                 break;
 
             case 'inprogress':
-                dispatch(setRecordingResultsValue("Transcription in progress. Please wait."))
+                dispatch(setRecordingResultsValue(consts.TRANSCRIPTION_IN_PROGRESS))
                 dispatch(setQuestionBox(false))
                 dispatch(setResultsBox(true))
                 while (true) {
