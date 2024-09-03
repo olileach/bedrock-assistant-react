@@ -11,7 +11,9 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import Tooltip from '@mui/material/Tooltip';
 import { createStyles, makeStyles } from "@material-ui/core";
 import LoopIcon from "@material-ui/icons/Loop";
-import { runTranscribeItem, 
+import { transcribeText, 
+         bedrockText,
+         updateItem,
          queryRecordingData,
          updateRecordNameCell,
         } from '../../Utils/RecorderUtils';
@@ -60,7 +62,7 @@ const RecordDataGrid = () => {
 
     };
 
-    const transcribeRecording = async (e) => {
+    const runTranscribeRecording = async (e) => {
 
         if (dataGridCheckboxRowId) { 
             dispatch(setResultsBox(true))}
@@ -70,12 +72,33 @@ const RecordDataGrid = () => {
         const id = parseInt(e['id']);
         
         dispatch(setRecordingResultsValue(consts.TRANSCRIPTION_IN_PROGRESS))
-        const itemStatus = await db.recording.get(id);
-        const bedrockResults = await runTranscribeItem(id, itemStatus.model);
-        dispatch(setRecordingResultsValue(bedrockResults));
-        dispatch(setQuestionBox(true));
+        const item = await db.recording.get(id);
+
+        updateItem(id, { transcribe: "inprogress", outputText: consts.TRANSCRIPTION_IN_PROGRESS } )
+
+        const transcribeResponse = await transcribeText(id, item.recording);
+
+        if (transcribeResponse['transcribeFailed'] === false) {
+            const bedrockResults = await bedrockText(id, transcribeResponse['jobTextResult'], item.model)
+            dispatch(setRecordingResultsValue(bedrockResults));
+            dispatch(setQuestionBox(true));
+
+        } else if (transcribeResponse['transcribeFailed'] === true) {
+            await db.recording.update(id, { transcribe: "failed", outputText: transcribeResponse['jobTextResult'] });
+            dispatch(setRecordingResultsValue(transcribeResponse['jobTextResult']));
+            dispatch(setQuestionBox(false));
+        }
+        else {
+            await db.recording.update(id, { transcribe: "failed", outputText: consts.TRANSCRIPTION_FAILED });
+            dispatch(setRecordingResultsValue(consts.TRANSCRIPTION_FAILED));
+            dispatch(setQuestionBox(false));
+        }
 
     }
+
+
+
+
 
     const columns = [
 
@@ -121,7 +144,7 @@ const RecordDataGrid = () => {
                                 margin: '5px',
                             }}
                             alignItems="center"
-                            onClick={() => transcribeRecording({ id })}
+                            onClick={() => runTranscribeRecording({ id })}
                             disableRowSelectionOnClick
                             icon={
                                 <Tooltip title="Click to transcribe recording">
@@ -160,7 +183,7 @@ const RecordDataGrid = () => {
                             }}
                             alignItems="center"
                             disableRowSelectionOnClick
-                            onClick={() => transcribeRecording({ id })}
+                            onClick={() => runTranscribeRecording({ id })}
                             icon={
                                 <Tooltip className={classes} title="Transcription Failed. Click to retry.">
                                     <ErrorIcon style={{ color: "#bd3e45" }} />
@@ -255,6 +278,12 @@ const RecordDataGrid = () => {
                 dispatch(setResultsBox(true))
                 while (true) {
                     const itemStatus = await db.recording.get(id);
+                    if (itemStatus.transcribe === 'failed') {
+                        dispatch(setRecordingResultsValue(itemStatus.outputText));
+                        dispatch(setQuestionBox(false));
+                        dispatch(setResultsBox(true));
+                        return false;
+                    }    
                     if (itemStatus.transcribe !== 'inprogress') {
                         dispatch(setRecordingResultsValue(itemStatus.outputText));
                         dispatch(setQuestionBox(true))
