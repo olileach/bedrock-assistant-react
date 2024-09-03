@@ -55,7 +55,7 @@ export default function ModelForm() {
   const setModel = async (e) => {
 
     if (recorderModelForm === undefined) {
-      console.log("select a model")
+      console.error("User need to select a model")
       return;
     }
 
