@@ -12,10 +12,9 @@ import Tooltip from '@mui/material/Tooltip';
 import { createStyles, makeStyles } from "@material-ui/core";
 import LoopIcon from "@material-ui/icons/Loop";
 import { transcribeText, 
-         bedrockText,
+         bedrockSummary,
          updateItem,
          queryRecordingData,
-         updateRecordNameCell,
         } from '../../Utils/RecorderUtils';
 import ErrorIcon from '@mui/icons-material/Error';
 import { useDispatch, useSelector } from 'react-redux';
@@ -57,9 +56,8 @@ const RecordDataGrid = () => {
     const dispatch = useDispatch();
     const dataGridCheckboxRowId = useSelector((state) => state.datagridRowId.value);
 
-    const handleRowEditStop = (newRow) => {
-        updateRecordNameCell(newRow.id, newRow.recorderNameForm);
-
+    const handleRowEditStop = (updateRow) => {
+        updateItem(updateRow.id, {"recorderNameForm" : updateRow.recorderNameForm})
     };
 
     const runTranscribeRecording = async (e) => {
@@ -79,7 +77,7 @@ const RecordDataGrid = () => {
         const transcribeResponse = await transcribeText(id, item.recording);
 
         if (transcribeResponse['transcribeFailed'] === false) {
-            const bedrockResults = await bedrockText(id, transcribeResponse['jobTextResult'], item.model)
+            const bedrockResults = await bedrockSummary(id, transcribeResponse['jobTextResult'], item.model)
             dispatch(setRecordingResultsValue(bedrockResults));
             dispatch(setQuestionBox(true));
 
@@ -95,10 +93,6 @@ const RecordDataGrid = () => {
         }
 
     }
-
-
-
-
 
     const columns = [
 
