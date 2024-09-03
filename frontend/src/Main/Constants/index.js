@@ -6,3 +6,4 @@ export const BEDROCK_FOLLOW_UP_WAIT = "\n\n\nPlease wait while your follow up qu
 export const RECORDING_NOT_TRANSCRIBED = "Recording not transcribed. Use the icon in the table to transcribe your recording.";
 export const TRANSCRIBE_OFF = "Off - Transcribe later using the transcribe button in the table below";
 export const TRANSCRIBE_ON = "On - Transcribe after the recording is saved";
+export const TRANSCRIPTION_FAILED = "Something went wrong. Please contact the developer.";
