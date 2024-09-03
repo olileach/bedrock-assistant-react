@@ -34,9 +34,7 @@ async function indexDbController(blob = false, transcribe, recorderNameForm = fa
             transcribeResults = await transcribeText(id, blob);
 
             if (transcribeResults['transcribeFailed'] === false){
-                console.log("trasniofnsadiunasdliuasnil")
-                console.log(transcribeResults['jobTextResult'])
-                bedrockResults = bedrockText(id, transcribeResults['jobTextResult'], model)
+                bedrockResults = bedrockSummary(id, transcribeResults['jobTextResult'], model)
             }
         }
     }
@@ -78,17 +76,13 @@ async function getItem(id) {
 
 async function updateItem(id, props) {
 
-    console.log(props)
     await db.recording.update(
         id, props
     ).then(function (done) {
-        console.log(done)
     });
 }
 
-async function bedrockText(id, text, model, followup = false) {
-
-    console.log("bedrock here")
+async function bedrockSummary(id, text, model, followup = false) {
 
     const bedrockPayload = {
         method: 'POST',
@@ -105,10 +99,10 @@ async function bedrockText(id, text, model, followup = false) {
     if (followup !== false) {
         await getItem(id)
         let updatedBedrockResponse = ''.concat(followup, "\n\n", bedrockResponse)
-        updateBedrockText(id, updatedBedrockResponse);
+        updateItem(id, { "transcribe": true, "outputText": updatedBedrockResponse })
         return (updatedBedrockResponse);
     } else {
-        updateBedrockText(id, bedrockResponse);
+        updateItem(id, { "transcribe": true, "outputText": bedrockResponse })
         return (bedrockResponse);
     }
 };
@@ -125,8 +119,8 @@ async function transcribeText(id, blob) {
         };
         const transcribeRequest = await fetch(`${process.env.REACT_APP_BASE_URL}` + "/api/transcribe", transcribePayload);
         const transcribeResponse = await transcribeRequest.json();
-        console.log(transcribeResponse)
-        updateItem(id, {"outputText": transcribeResponse['jobTextResult']})
+
+        updateItem(id, {"transcribeText": transcribeResponse['jobTextResult']})
 
         if (transcribeResponse['transcribeFailed'] === false){
 
@@ -135,7 +129,7 @@ async function transcribeText(id, blob) {
                             .then(function (done) {
                           });
         } else {
-            updateItem(id, {"transcribe" : "failed"})
+            updateItem(id, {"transcribe" : "failed", "outputText" : transcribeResponse['jobTextResult']})
         }
         return (transcribeResponse)
     }
@@ -145,48 +139,6 @@ async function transcribeText(id, blob) {
 
 }
 
-async function updateRecordNameCell(id, text) {
-
-    await db.recording.update(
-        id, { recorderNameForm: text }
-    )
-}
-
-async function updateTranscribeText(id, text) {
-
-    await db.recording.update(
-        id, { transcribeText: text }
-    ).then(function (update) {
-        if (update === 1 ? "updated" : "notupdated");
-    });
-}
-
-async function updateBedrockText(id, bedrockText) {
-
-    await db.recording.update(
-        id, { transcribe: true, outputText: bedrockText }
-    ).then(function (update) {
-    });
-}
-
-// async function runTranscribeItem(id, model) {
-
-//     const item = await db.recording.get(id);
-//     await db.recording.update(id, { transcribe: "inprogress", outputText: consts.TRANSCRIPTION_IN_PROGRESS });
-//     const transcribeRequest = await transcribeText(id, item.recording);
-//     console.log(transcribeRequest)
-
-//     if (transcribeRequest['transcribeFailed'] === false){
-//         console.log("trasniofnsadiunasdliuasnil")
-//         console.log(transcribeRequest['jobTextResult'])
-//         const bedrockResults = bedrockText(id, transcribeRequest['jobTextResult'], model)
-//         await db.recording.update(id, { transcribe: true });
-//         return bedrockResults;
-//     }  else {
-//         updateItem(id, {"transcribe" : "failed", "outputText": transcribeRequest['jobTextResult']})
-//         return transcribeRequest;
-//     }
-// }
 
 async function addRecordingData(blob, recorderNameForm, model, transcribe, recorderTimerForm, outputText = false) {
 
@@ -214,11 +166,9 @@ async function addRecordingData(blob, recorderNameForm, model, transcribe, recor
 
 export default indexDbController;
 export {
-    bedrockText,
+    bedrockSummary,
     getItem,
     queryRecordingData,
     transcribeText,
     updateItem,
-    updateRecordNameCell,
-    updateTranscribeText,
 };
