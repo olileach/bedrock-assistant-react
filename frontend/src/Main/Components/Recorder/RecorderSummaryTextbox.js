@@ -5,7 +5,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { useSelector, useDispatch } from 'react-redux';
 import Separator from '../Utils/Separator';
 import { InputAdornment } from '@mui/material';
-import { bedrockText, getItem } from '../../Utils/RecorderUtils';
+import { bedrockSummary, getItem } from '../../Utils/RecorderUtils';
 import { setQuestionBox } from '../../Redux/RecorderQuestionBox';
 import { setRecordingResultsValue } from '../../Redux/RecorderResultsBoxValue';
 import ModelDropdown from '../Models/ModelDropdown';
@@ -63,7 +63,7 @@ const RecorderSummaryBox = () => {
             "\n_______________________________________________________________\n")
         const tempResultBoxValue = resultsText + consts.BEDROCK_FOLLOW_UP_WAIT
         dispatch(setRecordingResultsValue(tempResultBoxValue))
-        let bedrockResponse = await bedrockText(dataGridCheckboxRowId, text, modelUsed, updatedText)
+        let bedrockResponse = await bedrockSummary(dataGridCheckboxRowId, text, modelUsed, updatedText)
         await updateItem(dataGridCheckboxRowId, {'model' : modelUsed})
         dispatch(setRecordingResultsValue(bedrockResponse))
         dispatch(setQuestionBox(true))
