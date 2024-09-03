@@ -135,8 +135,6 @@ app.post('/api/transcribe', express.raw({type: "*/*", limit: '2000mb'}), async f
 
     // Clean up s3 objects, tarnscript jobs etc..
     s3Utils.s3deleteObject(s3response);
-    console.log("s3 deleted object")
-    console.log(transcribeText['jobName'])
     transcribeUtils.deleteJob(transcribeText);
     
   }
