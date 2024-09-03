@@ -115,7 +115,7 @@ app.post('/api/bedrock', async function (req, res) {
 app.post('/api/transcribe', express.raw({type: "*/*", limit: '2000mb'}), async function (req, res) {
 
   var modelId = req.headers['x-model-name'];
-  console.log("Using the following modelId: " + modelId);
+  // console.log("Using the following modelId: " + modelId);
   console.log("Headers: " + JSON.stringify(req.headers));
 
   let s3response;
@@ -124,18 +124,21 @@ app.post('/api/transcribe', express.raw({type: "*/*", limit: '2000mb'}), async f
     s3response = await s3Utils.s3upload(req.body);
     const transcribeText = await transcribeUtils.transcribeJob(s3response);
 
-    // If not response from Transcribe has returned, pass back a message to the client to try again.
-    if (!transcribeText['jobTextResult']){
-      res.send("I didn't get any text to summarise. Did you say anything? Perhaps, try that again.");
+    console.log(transcribeText)
+    if (transcribeText['jobTextResult'] === ""){
+      transcribeText["transcribeFailed"] = true;
+      transcribeText['jobTextResult'] = "I didn't get any text from the recording. Something went wrong or there was no text to transcribe."
     }
 
-    console.log(transcribeText)
-    res.send(transcribeText) 
+    // return the transcribeText response back to the client
+    res.send(transcribeText)
 
     // Clean up s3 objects, tarnscript jobs etc..
     s3Utils.s3deleteObject(s3response);
+    console.log("s3 deleted object")
     console.log(transcribeText['jobName'])
     transcribeUtils.deleteJob(transcribeText);
+    
   }
   catch(err) {
     throw "Error with transscription job. Job Status: " + err
