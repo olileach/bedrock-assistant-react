@@ -6,6 +6,7 @@ import Architecture from "./Views/Architecture.js";
 import Models from "./Views/Models.js";
 import Question from "./Views/Question.js";
 import Recorder from "./Views/Recorder.js";
+// import ZoomApp from "./Views/Zoom.js"
 
 export default function Main(){
 
@@ -25,6 +26,7 @@ export default function Main(){
                         <Route path="/architecture" element={<Architecture />} />
                         <Route path="/recorder" element={<Recorder />} />
                         <Route path="/models" element={<Models />} />
+                        {/* <Route path="/zoom" element={<ZoomApp />} /> */}
                     </Routes>
                 </div>
         </div>
