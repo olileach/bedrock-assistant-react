@@ -5,7 +5,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { useSelector, useDispatch } from 'react-redux';
 import Separator from '../Utils/Separator';
 import { InputAdornment } from '@mui/material';
-import { bedrockText, getIndexedDbValueFromId } from '../../Utils/RecorderUtils';
+import { bedrockText, getItem } from '../../Utils/RecorderUtils';
 import { setQuestionBox } from '../../Redux/RecorderQuestionBox';
 import { setRecordingResultsValue } from '../../Redux/RecorderResultsBoxValue';
 import ModelDropdown from '../Models/ModelDropdown';
@@ -43,7 +43,7 @@ const RecorderSummaryBox = () => {
         let modelUsed;
         dispatch(setQuestionBox(false))
 
-        let items = await getIndexedDbValueFromId(dataGridCheckboxRowId);
+        let items = await getItem(dataGridCheckboxRowId);
 
         if (recorderModelForm === undefined) {
             modelUsed = items.model;
